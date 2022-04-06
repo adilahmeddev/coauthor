@@ -1,4 +1,4 @@
-package main
+package coauthors
 
 import (
 	chatadapters "coauthor/adapters"
@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func main() {
+func GetPairs() []string {
 	users := []chatadapters.User{{DiscordId: os.Getenv("adil_dc_id"), GithubEmail: "adilahmeddev@gmail.com", Name: "adil"}}
 	config := disc.Config{
 		GuildID:    os.Getenv("discord_guild_id"),
@@ -25,7 +25,9 @@ func main() {
 	}
 
 	agUsers := adapter.GetAGUsers()
-
-	fmt.Println(agUsers)
-
+	userStrings := []string{}
+	for _, user := range agUsers {
+		userStrings = append(userStrings, user.Name)
+	}
+	return userStrings
 }
