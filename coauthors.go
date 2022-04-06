@@ -1,9 +1,9 @@
 package coauthors
 
 import (
-	chatadapters "coauthor/adapters"
-	"coauthor/adapters/disc"
 	"fmt"
+	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
+	"github.com/AdilahmedDev/coauthor/adapters/disc"
 	"os"
 )
 

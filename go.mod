@@ -1,4 +1,4 @@
-module coauthor
+module github.com/AdilahmedDev/coauthor
 
 go 1.18
 

@@ -1,8 +1,8 @@
 package disc
 
 import (
-	chatadapters "coauthor/adapters"
 	"fmt"
+	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
 	"github.com/bwmarrin/discordgo"
 )
 

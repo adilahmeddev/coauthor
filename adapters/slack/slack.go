@@ -1,7 +1,7 @@
 package slack
 
 import (
-	chatadapters "coauthor/adapters"
+	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
 )
 
 type Slack struct {
