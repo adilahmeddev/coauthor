@@ -1,7 +1,6 @@
 package coauthor
 
 import (
-	"fmt"
 	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
 	"github.com/AdilahmedDev/coauthor/adapters/disc"
 	"os"
@@ -16,7 +15,6 @@ func GetPairs() []string {
 		ChannelIDB: "",
 		MyID:       os.Getenv("my_id"),
 	}
-	fmt.Println(config)
 	adapter := disc.NewDiscord(config, users)
 
 	err := adapter.Connect()
