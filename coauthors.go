@@ -11,6 +11,10 @@ func GetPairs() []string {
 		{
 			DiscordId: os.Getenv("test_adil_id"),
 			Name:      "testadil",
+		},
+		{
+			DiscordId: os.Getenv("tamara_dc_id"),
+			Name:      "Tamara",
 		}}
 	config := disc.Config{
 		GuildID:    os.Getenv("discord_guild_id"),
