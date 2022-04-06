@@ -1,6 +1,7 @@
 package disc
 
 import (
+	"fmt"
 	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
 	"github.com/bwmarrin/discordgo"
 )
@@ -41,18 +42,23 @@ func (d *Discord) Disconnect() error {
 
 func (d *Discord) GetAGUsers() []chatadapters.User {
 	users := []chatadapters.User{}
+	myState, err := d.Session.State.VoiceState(d.config.GuildID, d.config.MyID)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%v\n", myState)
 
-	//myState, _ := d.Session.State.VoiceState(d.config.GuildID, d.config.MyID)
 	for _, user := range d.users {
 		member, _ := d.Session.GuildMember(d.config.GuildID, user.DiscordId)
 
 		state, _ := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
 
-		if state != nil {
+		if state != nil && myState != nil {
 			if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID {
 				users = append(users, user)
 			}
 		}
+
 	}
 	return users
 }
