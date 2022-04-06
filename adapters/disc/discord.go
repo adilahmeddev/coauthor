@@ -49,7 +49,7 @@ func (d *Discord) GetAGUsers() []chatadapters.User {
 		state, _ := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
 
 		if state != nil && myState != nil {
-			if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID && state.ChannelID == myState.ChannelID {
+			if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID {
 				users = append(users, user)
 			}
 		}
