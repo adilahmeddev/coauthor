@@ -1,7 +1,6 @@
 package disc
 
 import (
-	"fmt"
 	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
 	"github.com/bwmarrin/discordgo"
 )
@@ -48,7 +47,6 @@ func (d *Discord) GetAGUsers() []chatadapters.User {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%v\n", myState)
 
 	for _, user := range d.users {
 		member, _ := d.Session.GuildMember(d.config.GuildID, user.DiscordId)
