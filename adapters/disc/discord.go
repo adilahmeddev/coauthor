@@ -41,13 +41,15 @@ func (d *Discord) Disconnect() error {
 
 func (d *Discord) GetAGUsers() []chatadapters.User {
 	users := []chatadapters.User{}
+
+	myState, _ := d.Session.State.VoiceState(d.config.GuildID, d.config.MyID)
 	for _, user := range d.users {
 		member, _ := d.Session.GuildMember(d.config.GuildID, user.DiscordId)
 
 		state, _ := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
 
-		if state != nil {
-			if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID {
+		if state != nil && myState != nil {
+			if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID && state.ChannelID == myState.ChannelID {
 				users = append(users, user)
 			}
 		}
