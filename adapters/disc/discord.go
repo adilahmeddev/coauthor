@@ -11,6 +11,7 @@ type Config struct {
 	ChannelIDA string
 	ChannelIDB string
 	BotToken   string
+	MyID       string
 }
 
 type Discord struct {
@@ -47,7 +48,7 @@ func (d *Discord) GetAGUsers() []chatadapters.User {
 		state, _ := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
 
 		if state != nil {
-			if state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB {
+			if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID {
 				users = append(users, user)
 			}
 		}

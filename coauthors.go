@@ -8,12 +8,13 @@ import (
 )
 
 func GetPairs() []string {
-	users := []chatadapters.User{{DiscordId: os.Getenv("adil_dc_id"), GithubEmail: "adilahmeddev@gmail.com", Name: "adil"}}
+	users := []chatadapters.User{{DiscordId: os.Getenv("adil_dc_id"), Name: "adil"}}
 	config := disc.Config{
 		GuildID:    os.Getenv("discord_guild_id"),
 		ChannelIDA: os.Getenv("discord_channel_a"),
 		BotToken:   os.Getenv("discord_bot"),
 		ChannelIDB: "",
+		MyID:       os.Getenv("my_id"),
 	}
 	fmt.Println(config)
 	adapter := disc.NewDiscord(config, users)
