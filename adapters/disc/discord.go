@@ -42,7 +42,9 @@ func (d *Discord) Disconnect() error {
 
 func (d *Discord) GetAGUsers() []chatadapters.User {
 	users := []chatadapters.User{}
-	myState, err := d.Session.State.VoiceState(d.config.GuildID, d.config.MyID)
+
+	me, _ := d.Session.GuildMember(d.config.GuildID, d.config.MyID)
+	myState, err := d.Session.State.VoiceState(d.config.GuildID, me.User.ID)
 	if err != nil {
 		panic(err)
 	}
