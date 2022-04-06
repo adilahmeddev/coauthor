@@ -9,9 +9,8 @@ import (
 func GetPairs() []string {
 	users := []chatadapters.User{{DiscordId: os.Getenv("adil_dc_id"), Name: "adil"},
 		{
-			DiscordId:   os.Getenv("test_adil_id"),
-			Name:        "testadil",
-			GithubEmail: "testadil@test.com",
+			DiscordId: os.Getenv("test_adil_id"),
+			Name:      "testadil",
 		}}
 	config := disc.Config{
 		GuildID:    os.Getenv("discord_guild_id"),

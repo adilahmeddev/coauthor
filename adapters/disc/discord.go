@@ -1,7 +1,6 @@
 package disc
 
 import (
-	"fmt"
 	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
 	"github.com/bwmarrin/discordgo"
 )
@@ -52,8 +51,6 @@ func (d *Discord) GetAGUsers() []chatadapters.User {
 				users = append(users, user)
 			}
 		}
-
-		fmt.Printf("%+v\n", member.User.Email)
 	}
 	return users
 }
