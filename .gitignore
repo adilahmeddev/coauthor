@@ -2,3 +2,4 @@
 vendor/
 /coauthor-config.json
 .hooks/
+/pairs.json
