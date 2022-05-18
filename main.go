@@ -34,7 +34,7 @@ func main() {
 
 	file, err := os.ReadFile(commitFilePath)
 	if err != nil {
-		log.Fatal(err)
+		os.Exit(1)
 	}
 
 	pairSource := getSourceFromArgs(os.Args)
@@ -43,14 +43,17 @@ func main() {
 
 	users, err := lib.GetAuthorList(authorsFilePath)
 	if err != nil {
-		log.Fatal(err)
+		os.Exit(1)
 	}
 	switch pairSource {
 	case "discord":
 		if conferr != nil {
-			log.Fatal("could not load config for discord", err)
+			os.Exit(1)
 		}
 		coauthors = lib.GetPairsFromDiscord(config, users)
+		if len(coauthors) == 0 {
+			os.Exit(1)
+		}
 	case "pairs":
 		coauthors, err = lib.GetPairsFromJSON(users)
 	}
@@ -93,20 +96,18 @@ func loadConfig() (config disc.Config, err error) {
 		if config.BotToken == "" {
 			return disc.Config{}, fmt.Errorf("BotToken is not provided")
 		}
-		fmt.Println("from env")
 		set = true
 	} else {
 		var bytes []byte
 		bytes, err = io.ReadAll(file)
 		if err != nil {
-			log.Fatal(err)
+			os.Exit(1)
 		}
 		err = json.Unmarshal(bytes, &config)
 		if err != nil {
-			log.Fatal(err)
+			os.Exit(1)
 		}
 		set = true
-		fmt.Println("from file")
 	}
 	if !set {
 		return disc.Config{}, fmt.Errorf("config has not been set")

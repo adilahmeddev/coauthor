@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD);
+if [ "$BRANCH_NAME" == 'HEAD' ] ; then
+    # if there's no branch name it must mean we're in a rebase. We don't want to update the commit message of rebased
+    # commits.
+    exit 0
+fi
+
+coauthor discord --commitFile=$1
+exitCode=$?
+if [ $exitCode -ne 0 ]
+then
+    if [ -e pairs.json ]
+    then
+    coauthor pairs --commitFile=$1
+    else
+         echo "not auto adding co-authors because you have no pairs.json file"
+    fi
+fi
+exitCode=$?
+if [ $exitCode -ne 0 ]
+then
+    echo "did not successfully add co-authors"
+fi

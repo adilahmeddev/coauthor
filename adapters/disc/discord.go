@@ -2,9 +2,8 @@ package disc
 
 import (
 	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
-	"github.com/alecthomas/repr"
 	"github.com/bwmarrin/discordgo"
-	"log"
+	"os"
 )
 
 type Config struct {
@@ -53,11 +52,11 @@ func (d *Discord) GetAGUsers() []chatadapters.User {
 	returnUsers := []chatadapters.User{}
 	me, err := d.Session.GuildMember(d.config.GuildID, d.config.MyID)
 	if err != nil {
-		log.Fatal("cant get your user")
+		os.Exit(1)
 	}
 	myState, err := d.Session.State.VoiceState(d.config.GuildID, me.User.ID)
 	if err != nil {
-		log.Fatal("Unable to get your voice session. Are you in a voice chat in the right server?")
+		os.Exit(1)
 	}
 	for _, user := range d.authors {
 		if user.DiscordId == "" {
@@ -65,15 +64,12 @@ func (d *Discord) GetAGUsers() []chatadapters.User {
 		}
 		member, err := d.Session.GuildMember(d.config.GuildID, user.DiscordId)
 		if err != nil {
-			log.Fatal("could not get ", repr.String(user), "member info ", err)
+			os.Exit(1)
 		}
 		if member != nil {
-			state, err := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
-			if err != nil {
-				log.Fatal("could not get users state", err)
-			}
-			if state != nil && myState != nil {
+			state, _ := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
 
+			if state != nil && myState != nil {
 				if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID && isAuthor(d.authors, user.DiscordId) {
 					returnUsers = append(returnUsers, user)
 				}
@@ -86,14 +82,10 @@ func (d *Discord) GetAGUsers() []chatadapters.User {
 func (d *Discord) IsInVoice(user chatadapters.User) bool {
 	member, err := d.Session.GuildMember(d.config.GuildID, user.DiscordId)
 	if err != nil {
-		panic(err)
+		os.Exit(1)
 	}
 
 	state, _ := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
-	if state != nil {
-
-	}
-
 	if state != nil {
 		return true
 	}
