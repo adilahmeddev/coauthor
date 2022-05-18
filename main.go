@@ -54,15 +54,19 @@ func main() {
 	case "pairs":
 		coauthors, err = lib.GetPairsFromJSON(users)
 	}
+	if len(coauthors) > 0 {
+		output := lib.PrepareCommitMessage(string(file), coauthors)
 
-	output := lib.PrepareCommitMessage(string(file), coauthors)
+		err = os.WriteFile(commitFilePath, []byte(output), 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	err = os.WriteFile(commitFilePath, []byte(output), 0644)
-	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Added co-authors:", coauthors)
+	} else {
+		fmt.Println("No coauthors found")
+
 	}
-
-	fmt.Println("Added co-authors:", coauthors)
 }
 
 func loadConfig() (config disc.Config, err error) {
