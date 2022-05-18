@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/AdilahmedDev/coauthor"
 	"github.com/AdilahmedDev/coauthor/adapters/disc"
+	coauthor "github.com/AdilahmedDev/coauthor/lib"
 	"io"
 	"log"
 	"os"
