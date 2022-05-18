@@ -1,3 +1,4 @@
 /.envrc
 vendor/
 /coauthor-config.json
+.hooks/
