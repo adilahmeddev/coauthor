@@ -2,39 +2,67 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
+	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
 	"github.com/AdilahmedDev/coauthor/adapters/disc"
-	coauthor "github.com/AdilahmedDev/coauthor/lib"
+	"github.com/AdilahmedDev/coauthor/lib"
 	"io"
 	"log"
 	"os"
 )
 
+var (
+	authorsFilePath string
+	commitFilePath  string
+	pairsFilePath   string
+)
+
+func init() {
+	flag.StringVar(&authorsFilePath, "authorsFile", "authors.json", "names & emails of teammates")
+	flag.StringVar(&commitFilePath, "commitFile", ".git/COMMIT_EDITMSG", "path to commit message file")
+	flag.StringVar(&pairsFilePath, "pairsFile", "pairs.json", "path to pairs file")
+}
+
 func main() {
-	pairSource := getSourceFromArgs(os.Args)
-	filePath := "authors.json"
+	flag.Parse()
+	log.SetFlags(log.Lshortfile)
 	var (
-		pairs []string
-		err   error
+		coauthors chatadapters.Users
+		err       error
 	)
+
+	file, err := os.ReadFile(commitFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pairSource := getSourceFromArgs(os.Args)
 
 	config, err := loadConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	users, err := coauthor.GetAuthorList(filePath)
+	users, err := lib.GetAuthorList(authorsFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	switch pairSource {
 	case "discord":
-		pairs = coauthor.GetPairsFromDiscord(config, users)
+		coauthors = lib.GetPairsFromDiscord(config, users)
 	case "pairs":
-		pairs, err = coauthor.GetPairsFromJSON(users)
+		coauthors, err = lib.GetPairsFromJSON(users)
 	}
 
-	fmt.Println(pairs)
+	output := lib.PrepareCommitMessage(string(file), coauthors)
+
+	err = os.WriteFile(commitFilePath, []byte(output), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Added co-authors:", coauthors)
 }
 
 func loadConfig() (config disc.Config, err error) {

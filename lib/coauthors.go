@@ -1,4 +1,4 @@
-package coauthor
+package lib
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func GetPairsFromDiscord(config disc.Config, users []chatadapters.User) []string {
+func GetPairsFromDiscord(config disc.Config, users []chatadapters.User) chatadapters.Users {
 	adapter := disc.NewDiscord(config, users)
 
 	err := adapter.Connect()
@@ -22,9 +22,9 @@ func GetPairsFromDiscord(config disc.Config, users []chatadapters.User) []string
 	}
 
 	agUsers := adapter.GetAGUsers()
-	userStrings := []string{}
+	userStrings := chatadapters.Users{}
 	for _, user := range agUsers {
-		userStrings = append(userStrings, user.Name)
+		userStrings = append(userStrings, user)
 	}
 	return userStrings
 }
@@ -56,21 +56,21 @@ func GetAuthorList(filePath string) (users []chatadapters.User, err error) {
 	}
 	return users, nil
 }
-func GetPairsFromJSON(authors []chatadapters.User) (coauthors []string, err error) {
+func GetPairsFromJSON(authors []chatadapters.User) (coauthors chatadapters.Users, err error) {
 	pairFile, err := os.ReadFile("pairs.json")
 	if err != nil {
-		return []string{}, err
+		return chatadapters.Users{}, err
 	}
 
 	var pairs []string
 	err = json.NewDecoder(bytes.NewReader(pairFile)).Decode(&pairs)
 	if err != nil {
-		return []string{}, err
+		return chatadapters.Users{}, err
 	}
 	for _, pair := range pairs {
 		for _, author := range authors {
 			if pair == author.Name {
-				coauthors = append(coauthors, pair)
+				coauthors = append(coauthors, author)
 			}
 		}
 	}
