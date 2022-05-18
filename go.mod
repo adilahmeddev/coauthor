@@ -2,7 +2,10 @@ module github.com/AdilahmedDev/coauthor
 
 go 1.18
 
-require github.com/bwmarrin/discordgo v0.24.0
+require (
+	github.com/alecthomas/repr v0.0.0-20220113201626-b1b626ac65ae
+	github.com/bwmarrin/discordgo v0.24.0
+)
 
 require (
 	github.com/gorilla/websocket v1.4.2 // indirect

@@ -8,6 +8,7 @@ type ChatPlatform interface {
 }
 
 type User struct {
-	DiscordId string
 	Name      string
+	DiscordId string
+	Email     string
 }

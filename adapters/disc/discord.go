@@ -2,7 +2,9 @@ package disc
 
 import (
 	chatadapters "github.com/AdilahmedDev/coauthor/adapters"
+	"github.com/alecthomas/repr"
 	"github.com/bwmarrin/discordgo"
+	"log"
 )
 
 type Config struct {
@@ -16,11 +18,11 @@ type Config struct {
 type Discord struct {
 	Session *discordgo.Session
 	config  Config
-	users   []chatadapters.User
+	authors []chatadapters.User
 }
 
 func NewDiscord(config Config, users []chatadapters.User) *Discord {
-	return &Discord{config: config, users: users}
+	return &Discord{config: config, authors: users}
 }
 
 func (d *Discord) Connect() error {
@@ -38,29 +40,47 @@ func (d *Discord) Connect() error {
 func (d *Discord) Disconnect() error {
 	return d.Session.Close()
 }
-
+func isAuthor(slice []chatadapters.User, id string) bool {
+	for _, t := range slice {
+		if t.DiscordId == id {
+			return true
+		}
+	}
+	return false
+}
 func (d *Discord) GetAGUsers() []chatadapters.User {
-	users := []chatadapters.User{}
 
-	me, _ := d.Session.GuildMember(d.config.GuildID, d.config.MyID)
+	returnUsers := []chatadapters.User{}
+	me, err := d.Session.GuildMember(d.config.GuildID, d.config.MyID)
+	if err != nil {
+		log.Fatal("cant get your user")
+	}
 	myState, err := d.Session.State.VoiceState(d.config.GuildID, me.User.ID)
 	if err != nil {
-		panic(err)
+		log.Fatal("Unable to get your voice session. Are you in a voice chat in the right server?")
 	}
+	for _, user := range d.authors {
+		if user.DiscordId == "" {
+			continue
+		}
+		member, err := d.Session.GuildMember(d.config.GuildID, user.DiscordId)
+		if err != nil {
+			log.Fatal("could not get ", repr.String(user), "member info ", err)
+		}
+		if member != nil {
+			state, err := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
+			if err != nil {
+				log.Fatal("could not get users state", err)
+			}
+			if state != nil && myState != nil {
 
-	for _, user := range d.users {
-		member, _ := d.Session.GuildMember(d.config.GuildID, user.DiscordId)
-
-		state, _ := d.Session.State.VoiceState(d.config.GuildID, member.User.ID)
-
-		if state != nil && myState != nil {
-			if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID {
-				users = append(users, user)
+				if (state.ChannelID == d.config.ChannelIDA || state.ChannelID == d.config.ChannelIDB) && user.DiscordId != d.config.MyID && isAuthor(d.authors, user.DiscordId) {
+					returnUsers = append(returnUsers, user)
+				}
 			}
 		}
-
 	}
-	return users
+	return returnUsers
 }
 
 func (d *Discord) IsInVoice(user chatadapters.User) bool {
