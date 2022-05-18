@@ -39,10 +39,7 @@ func main() {
 
 	pairSource := getSourceFromArgs(os.Args)
 
-	config, err := loadConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
+	config, conferr := loadConfig()
 
 	users, err := lib.GetAuthorList(authorsFilePath)
 	if err != nil {
@@ -50,23 +47,26 @@ func main() {
 	}
 	switch pairSource {
 	case "discord":
+		if conferr != nil {
+			log.Fatal("could not load config for discord", err)
+		}
 		coauthors = lib.GetPairsFromDiscord(config, users)
 	case "pairs":
 		coauthors, err = lib.GetPairsFromJSON(users)
 	}
+
+	output := lib.PrepareCommitMessage(string(file), coauthors)
+
+	err = os.WriteFile(commitFilePath, []byte(output), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if len(coauthors) > 0 {
-		output := lib.PrepareCommitMessage(string(file), coauthors)
-
-		err = os.WriteFile(commitFilePath, []byte(output), 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
-
 		fmt.Println("Added co-authors:", coauthors)
 	} else {
-		fmt.Println("No coauthors found")
-
+		fmt.Println("No co-authors added")
 	}
+
 }
 
 func loadConfig() (config disc.Config, err error) {
