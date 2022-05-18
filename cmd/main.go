@@ -1,9 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"github.com/AdilahmedDev/coauthor"
 	"github.com/AdilahmedDev/coauthor/adapters/disc"
-	"github.com/alecthomas/repr"
 	"log"
 	"os"
 )
@@ -26,15 +26,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	repr.Println(users)
 	switch pairSource {
 	case "discord":
 		pairs = coauthor.GetPairsFromDiscord(config, users)
 	case "pairs":
-
 		pairs, err = coauthor.GetPairsFromJSON(users)
 	}
 
+	fmt.Println(pairs)
 }
 
 func getSourceFromArgs(args []string) string {
